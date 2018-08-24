@@ -1,41 +1,41 @@
 /*
-* robot_state.hpp
-*
-*  Created on: 7 Jan 2014
-*      Author: Manos Nikolaidis
-*
-* Software License Agreement (BSD License)
-*
-*  Copyright (c) 2014, Shadow Robot Company Ltd.
-*  All rights reserved.
-*
-*  Redistribution and use in source and binary forms, with or without
-*  modification, are permitted provided that the following conditions
-*  are met:
-*
-*   * Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above
-*     copyright notice, this list of conditions and the following
-*     disclaimer in the documentation and/or other materials provided
-*     with the distribution.
-*   * Neither the name of the Willow Garage nor the names of its
-*     contributors may be used to endorse or promote products derived
-*     from this software without specific prior written permission.
-*
-*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-*  POSSIBILITY OF SUCH DAMAGE.
-*********************************************************************/
+ * robot_state.hpp
+ *
+ *  Created on: 7 Jan 2014
+ *      Author: Manos Nikolaidis
+ *
+ * Software License Agreement (BSD License)
+ *
+ *  Copyright (c) 2014, Shadow Robot Company Ltd.
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *   * Neither the name of the Willow Garage nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *********************************************************************/
 
 #ifndef ROS_ETHERCAT_MODEL_ROBOTSTATE_HPP
 #define ROS_ETHERCAT_MODEL_ROBOTSTATE_HPP
@@ -47,7 +47,6 @@
 #include <hardware_interface/hardware_interface.h>
 #include "ros_ethercat_model/joint.hpp"
 #include "ros_ethercat_model/imu_state.hpp"
-
 #include "ros_ethercat_model/transmission.hpp"
 #include "ros_ethercat_model/hardware_interface.hpp"
 #include <map>
@@ -93,9 +92,10 @@ public:
            it != robot_model_.joints_.end();
            ++it)
       {
-  if (use_joint_(it->second->name) && (it->second->type == urdf::Joint::PRISMATIC ||
+
+	if (use_joint_(it->second->name) && (it->second->type == urdf::Joint::PRISMATIC ||
                                              it->second->type == urdf::Joint::REVOLUTE))
-  {
+	{
           // URDF sensor implementation is incomplete, so cant get list of named imus.
           // find the prefix of the imu from the joint names instead
           std::string prefix = it->first.substr(0, it->first.find("_"));
@@ -111,31 +111,31 @@ public:
            xit;
            xit = xit->NextSiblingElement("transmission"))
       {
-  std::string type, joint_name;
+	std::string type, joint_name;
 
-  if (xit->Attribute("type"))
-  {
-    type = xit->Attribute("type");
-  }  // new transmissions have type as an element instead of attribute
-  else if (xit->FirstChildElement("type"))
-  {
-    type = std::string(xit->FirstChildElement("type")->GetText());
-  }
+	if (xit->Attribute("type"))
+	{
+	  type = xit->Attribute("type");
+	} // new transmissions have type as an element instead of attribute
+	else if (xit->FirstChildElement("type"))
+	{
+	  type = std::string(xit->FirstChildElement("type")->GetText());
+	}
 
-  joint_name = string(xit->FirstChildElement("joint")->Attribute("name"));
-  if (joint_name.empty())
-  {
-    ROS_FATAL_STREAM("Transmission specified without joint element.");
-  }
+	joint_name = string(xit->FirstChildElement("joint")->Attribute("name"));
+	if (joint_name.empty())
+	{
+	  ROS_FATAL_STREAM("Transmission specified without joint element.");
+	}
 
-  if (!type.empty() && use_joint_(joint_name))
-  {
-    Transmission *t = transmission_loader_.createUnmanagedInstance(type);
-    if (!t || !t->initXml(xit, this))
-      throw std::runtime_error(std::string("Failed to initialize transmission type: ") + type);
+	if (!type.empty() && use_joint_(joint_name))
+	{
+	  Transmission *t = transmission_loader_.createUnmanagedInstance(type);
+	  if (!t || !t->initXml(xit, this))
+	    throw std::runtime_error(std::string("Failed to initialize transmission type: ") + type);
 
-    transmissions_.push_back(t);
-  }
+	  transmissions_.push_back(t);
+	}
       }
     }
     catch (const std::runtime_error &ex)
@@ -234,7 +234,7 @@ public:
       const char *filter = (*filter_it).c_str();
       if (!strncmp(joint_name.c_str(), filter, strlen(filter)))  // strncmp returns 0 if joint name starts with filter
       {
-  return true;
+	return true;
       }
     }
     return false;
