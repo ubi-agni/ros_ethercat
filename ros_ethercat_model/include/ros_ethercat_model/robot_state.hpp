@@ -70,7 +70,7 @@ using std::string;
 class RobotState : public hardware_interface::HardwareInterface
 {
 public:
-  explicit RobotState(TiXmlElement *root = NULL, vector<string> joint_filter = vector<string>())
+  explicit RobotState(tinyxml2::XMLElement *root = NULL, vector<string> joint_filter = vector<string>())
     : joint_filter_(joint_filter), transmission_loader_("ros_ethercat_model", "ros_ethercat_model::Transmission")
   {
     if (root)
@@ -83,7 +83,7 @@ public:
     return &actuator_states_[name];
   }
 
-  void initXml(TiXmlElement *root)
+  void initXml(tinyxml2::XMLElement *root)
   {
     try
     {
@@ -93,9 +93,10 @@ public:
            it != robot_model_.joints_.end();
            ++it)
       {
-  if (use_joint_(it->second->name) && (it->second->type == urdf::Joint::PRISMATIC ||
+
+	if (use_joint_(it->second->name) && (it->second->type == urdf::Joint::PRISMATIC ||
                                              it->second->type == urdf::Joint::REVOLUTE))
-  {
+	{
           // URDF sensor implementation is incomplete, so cant get list of named imus.
           // find the prefix of the imu from the joint names instead
           std::string prefix = it->first.substr(0, it->first.find("_"));
@@ -107,35 +108,35 @@ public:
         }
       }
 
-      for (TiXmlElement *xit = root->FirstChildElement("transmission");
+      for (tinyxml2::XMLElement *xit = root->FirstChildElement("transmission");
            xit;
            xit = xit->NextSiblingElement("transmission"))
       {
-  std::string type, joint_name;
+	std::string type, joint_name;
 
-  if (xit->Attribute("type"))
-  {
-    type = xit->Attribute("type");
-  }  // new transmissions have type as an element instead of attribute
-  else if (xit->FirstChildElement("type"))
-  {
-    type = std::string(xit->FirstChildElement("type")->GetText());
-  }
+	if (xit->Attribute("type"))
+	{
+	  type = xit->Attribute("type");
+	} // new transmissions have type as an element instead of attribute
+	else if (xit->FirstChildElement("type"))
+	{
+	  type = std::string(xit->FirstChildElement("type")->GetText());
+	}
 
-  joint_name = string(xit->FirstChildElement("joint")->Attribute("name"));
-  if (joint_name.empty())
-  {
-    ROS_FATAL_STREAM("Transmission specified without joint element.");
-  }
+	joint_name = string(xit->FirstChildElement("joint")->Attribute("name"));
+	if (joint_name.empty())
+	{
+	  ROS_FATAL_STREAM("Transmission specified without joint element.");
+	}
 
-  if (!type.empty() && use_joint_(joint_name))
-  {
-    Transmission *t = transmission_loader_.createUnmanagedInstance(type);
-    if (!t || !t->initXml(xit, this))
-      throw std::runtime_error(std::string("Failed to initialize transmission type: ") + type);
+	if (!type.empty() && use_joint_(joint_name))
+	{
+	  Transmission *t = transmission_loader_.createUnmanagedInstance(type);
+	  if (!t || !t->initXml(xit, this))
+	    throw std::runtime_error(std::string("Failed to initialize transmission type: ") + type);
 
-    transmissions_.push_back(t);
-  }
+	  transmissions_.push_back(t);
+	}
       }
     }
     catch (const std::runtime_error &ex)
@@ -234,7 +235,7 @@ public:
       const char *filter = (*filter_it).c_str();
       if (!strncmp(joint_name.c_str(), filter, strlen(filter)))  // strncmp returns 0 if joint name starts with filter
       {
-  return true;
+	return true;
       }
     }
     return false;
