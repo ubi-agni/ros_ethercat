@@ -36,7 +36,7 @@ CATKIN_DEPENDS
 # in addition to not propagating ros_ethercat_loop RUNPATH to dependencies, in contrast to RPATH
 SET(GCC_NEWDTAGS_LINK_FLAGS "-Wl,--disable-new-dtags")
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${GCC_NEWDTAGS_LINK_FLAGS}")
-
+set (CMAKE_CXX_STANDARD 11)
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} rt ${catkin_LIBRARIES})
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})

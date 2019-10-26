@@ -45,6 +45,7 @@ CFG_EXTRAS
     ${PROJECT_NAME}-extras.cmake
 )
 
+set (CMAKE_CXX_STANDARD 11)
 add_library(${PROJECT_NAME} src/ros_ethercat.cpp)
 
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
